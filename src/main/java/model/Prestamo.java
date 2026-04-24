@@ -18,6 +18,10 @@ public class Prestamo {
         this.fechaDevolucion = fechaDevolucion;
     }
 
+    public Prestamo() {
+
+    }
+
     public int getId() {
         return id;
     }

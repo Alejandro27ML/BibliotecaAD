@@ -98,23 +98,6 @@ public class LibroDAO {
         }
     }
 
-    public void eliminarLibro(int id) {
-        String sql = "DELETE FROM libros WHERE id = ?";
-
-        try {
-            Connection conn = DatabaseConnection.conectar();
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ps.setInt(1, id);
-            ps.executeUpdate();
-
-            System.out.println("Libro eliminado.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<Libro> consultarLibrosPorAutor(int idAutor) {
         List<Libro> libros = new ArrayList<>();
         String sql = "SELECT * FROM libros WHERE id_autor = ?";
@@ -139,6 +122,36 @@ public class LibroDAO {
         }
 
         return libros;
+    }
+
+    public List<String> obtenerLibrosMasPrestados() {
+        List<String> lista = new ArrayList<>();
+
+        String sql = """
+        SELECT l.id, l.nombre, COUNT(p.id_libro) AS total_prestamos
+        FROM libros l
+        INNER JOIN prestamos p ON l.id = p.id_libro
+        GROUP BY l.id, l.nombre
+        ORDER BY total_prestamos DESC
+    """;
+
+        try (Connection conn = DatabaseConnection.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nombre = rs.getString("nombre");
+                int total = rs.getInt("total_prestamos");
+
+                lista.add("ID: " + id + " | " + nombre + " | Prestado: " + total + " veces");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener libros más prestados: " + e.getMessage());
+        }
+
+        return lista;
     }
 }
 

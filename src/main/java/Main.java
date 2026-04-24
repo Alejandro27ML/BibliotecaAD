@@ -8,6 +8,7 @@ import model.Usuario;
 import model.Prestamo;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -24,19 +25,21 @@ public class Main {
         int opcion;
 
         do {
-            System.out.println("\n===== BIBLIOTECA =====");
-            System.out.println("1. Insertar autor");
-            System.out.println("2. Listar autores");
-            System.out.println("3. Insertar libro");
-            System.out.println("4. Listar libros");
-            System.out.println("5. Insertar usuario");
-            System.out.println("6. Listar usuarios");
-            System.out.println("7. Insertar préstamo");
-            System.out.println("8. Listar préstamos");
-            System.out.println("9. Mostrar libros de un autor");
-            System.out.println("10. Mostrar préstamos de un usuario");
-            System.out.println("11. Mostrar cantidad de libros por autor");
-            System.out.println("0. Salir");
+            System.out.println("\n-----{ BIBLIOTECA }-----");
+            System.out.println("1. Insertar autor.");
+            System.out.println("2. Listar autores.");
+            System.out.println("3. Insertar libro.");
+            System.out.println("4. Listar libros.");
+            System.out.println("5. Insertar usuario.");
+            System.out.println("6. Listar usuarios.");
+            System.out.println("7. Eliminar usuario.");
+            System.out.println("8. Insertar préstamo.");
+            System.out.println("9. Listar préstamos.");
+            System.out.println("10. Mostrar todos los libros de un autor.");
+            System.out.println("11. Mostrar todos los préstamos de un usuario.");
+            System.out.println("12. Mostrar cantidad de libros de cada autor.");
+            System.out.println("13. Top libros más populares.");
+            System.out.println("0. Salir.");
             System.out.print("Elige una opción: ");
 
             opcion = sc.nextInt();
@@ -90,6 +93,13 @@ public class Main {
                     break;
 
                 case 7:
+                    System.out.print("ID del usuario a eliminar: ");
+                    int idUsuarioEliminar =sc.nextInt(); sc.nextLine();
+
+                    usuarioDAO.eliminarUsuario(idUsuarioEliminar);
+                    break;
+
+                case 8:
                     System.out.print("ID del préstamo: ");
                     int idPrestamo = sc.nextInt();
                     System.out.print("ID del usuario: ");
@@ -103,24 +113,36 @@ public class Main {
                     prestamoDAO.insertarPrestamo(new Prestamo(idPrestamo, idU, idL, fechaP, null));
                     break;
 
-                case 8:
+                case 9:
                     prestamoDAO.consultarPrestamos().forEach(System.out::println);
                     break;
 
-                case 9:
+                case 10:
                     System.out.print("ID del autor: ");
                     int idAutorConsulta = sc.nextInt();
                     libroDAO.consultarLibrosPorAutor(idAutorConsulta).forEach(System.out::println);
                     break;
 
-                case 10:
+                case 11:
                     System.out.print("ID del usuario: ");
                     int idUsuarioConsulta = sc.nextInt();
                     prestamoDAO.consultarPrestamosPorUsuario(idUsuarioConsulta).forEach(System.out::println);
                     break;
 
-                case 11:
+                case 12:
                     autorDAO.contarLibrosPorAutor();
+                    break;
+
+                case 13:
+                    System.out.println("\n--- Libros más prestados ---");
+
+                    List<String> ranking = libroDAO.obtenerLibrosMasPrestados();
+
+                    if (ranking.isEmpty()) {
+                        System.out.println("No hay préstamos registrados.");
+                    } else {
+                        ranking.forEach(System.out::println);
+                    }
                     break;
 
                 case 0:

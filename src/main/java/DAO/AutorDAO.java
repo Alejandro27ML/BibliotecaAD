@@ -98,23 +98,6 @@ public class AutorDAO {
         }
     }
 
-    public void eliminarAutor(int id) {
-        String sql = "DELETE FROM autores WHERE id = ?";
-
-        try {
-            Connection conn = DatabaseConnection.conectar();
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ps.setInt(1, id);
-            ps.executeUpdate();
-
-            System.out.println("Autor eliminado.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void contarLibrosPorAutor() {
         String sql = "SELECT a.nombre, a.apellido, COUNT(l.id) AS total_libros " +
                 "FROM autores a LEFT JOIN libros l ON a.id = l.id_autor " +
