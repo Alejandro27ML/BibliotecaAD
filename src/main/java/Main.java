@@ -35,15 +35,15 @@ public class Main {
             System.out.println("7. Eliminar usuario.");
             System.out.println("8. Insertar préstamo.");
             System.out.println("9. Listar préstamos.");
-            System.out.println("10. Mostrar todos los libros de un autor.");
-            System.out.println("11. Mostrar todos los préstamos de un usuario.");
-            System.out.println("12. Mostrar cantidad de libros de cada autor.");
-            System.out.println("13. Top libros más populares.");
+            System.out.println("10. Eliminar préstamo.");
+            System.out.println("11. Mostrar todos los libros de un autor.");
+            System.out.println("12. Mostrar todos los préstamos de un usuario.");
+            System.out.println("13. Mostrar cantidad de libros de cada autor.");
+            System.out.println("14. Top libros más populares.");
             System.out.println("0. Salir.");
             System.out.print("Elige una opción: ");
 
-            opcion = sc.nextInt();
-            sc.nextLine();
+            opcion = comprobarOpcion(sc, 0, 13);
 
             switch (opcion) {
 
@@ -103,20 +103,25 @@ public class Main {
                     break;
 
                 case 10:
+                    int idPrestamoEliminar = comprobarID(sc, "ID del préstamo a eliminar: ", "prestamo", prestamoDAO);
+                    prestamoDAO.eliminarPrestamo(idPrestamoEliminar);
+                    break;
+
+                case 11:
                     int idAutorConsulta = comprobarID(sc, "ID del autor: ", "autor", autorDAO);
                     libroDAO.consultarLibrosPorAutor(idAutorConsulta).forEach(System.out::println);
                     break;
 
-                case 11:
+                case 12:
                     int idUsuarioConsulta = comprobarID(sc, "ID del usuario: ", "usuario", usuarioDAO);
                     prestamoDAO.consultarPrestamosPorUsuario(idUsuarioConsulta).forEach(System.out::println);
                     break;
 
-                case 12:
+                case 13:
                     autorDAO.contarLibrosPorAutor();
                     break;
 
-                case 13:
+                case 14:
                     System.out.println("\n--- Libros más prestados ---");
                     List<String> ranking = libroDAO.obtenerLibrosMasPrestados();
 
@@ -141,6 +146,29 @@ public class Main {
     }
 
     //No sabia donde meter estos metodos, así que los voy a poner en el Main, no se si es correcto.
+
+    //Comprobar que en el menú se indica una opción válida:
+    public static int comprobarOpcion(Scanner sc, int min, int max) {
+        while (true) {
+            System.out.print("Elige una opción: ");
+
+            if (!sc.hasNextInt()) {
+                System.out.println("Debes introducir un número.");
+                sc.nextLine();
+                continue;
+            }
+
+            int opcion = sc.nextInt();
+            sc.nextLine();
+
+            if (opcion < min || opcion > max) {
+                System.out.println("Opción fuera de rango. Intentalo de nuevo.");
+                continue;
+            }
+
+            return opcion;
+        }
+    }
 
     //Validar formatos de id.
     public static boolean validarFormatoID(int id, String tipo) {

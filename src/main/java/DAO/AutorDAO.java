@@ -9,6 +9,7 @@ import java.util.List;
 
 public class AutorDAO {
 
+    //Metodo para insertar nuevo autor.
     public void insertarAutor(Autor autor) {
         String sql = "INSERT INTO autores (id, nombre, apellido) VALUES (?, ?, ?)";
 
@@ -28,6 +29,7 @@ public class AutorDAO {
         }
     }
 
+    //Metodo para consultar todos los autores.
     public List<Autor> consultarAutores() {
         List<Autor> autores = new ArrayList<>();
         String sql = "SELECT * FROM autores";
@@ -53,6 +55,7 @@ public class AutorDAO {
         return autores;
     }
 
+    //Metodo para buscar un autor por su id.
     public Autor buscarPorId(int id) {
         String sql = "SELECT * FROM autores WHERE id = ?";
         Autor autor = null;
@@ -79,25 +82,7 @@ public class AutorDAO {
         return autor;
     }
 
-    public void actualizarAutor(int id, String nombre, String apellido) {
-        String sql = "UPDATE autores SET nombre = ?, apellido = ? WHERE id = ?";
-
-        try {
-            Connection conn = DatabaseConnection.conectar();
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ps.setString(1, nombre);
-            ps.setString(2, apellido);
-            ps.setInt(3, id);
-
-            ps.executeUpdate();
-            System.out.println("Autor actualizado.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+    //Metodo para mostrar cuantos libros hay de cada autor.
     public void contarLibrosPorAutor() {
         String sql = "SELECT a.nombre, a.apellido, COUNT(l.id) AS total_libros " +
                 "FROM autores a LEFT JOIN libros l ON a.id = l.id_autor " +

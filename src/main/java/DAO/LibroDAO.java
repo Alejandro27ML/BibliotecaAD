@@ -9,6 +9,7 @@ import java.util.List;
 
 public class LibroDAO {
 
+    //Metodo para insertar un nuevo libro.
     public void insertarLibro(Libro libro) {
         String sql = "INSERT INTO libros (id, nombre, id_autor) VALUES (?, ?, ?)";
 
@@ -28,6 +29,7 @@ public class LibroDAO {
         }
     }
 
+    //Metodo para consultar un libro y su autor.
     public List<Libro> consultarLibros() {
         List<Libro> libros = new ArrayList<>();
         String sql = "SELECT * FROM libros";
@@ -53,6 +55,7 @@ public class LibroDAO {
         return libros;
     }
 
+    //Metodo para buscar un libro por su id.
     public Libro buscarPorId(int id) {
         String sql = "SELECT * FROM libros WHERE id = ?";
         Libro libro = null;
@@ -79,25 +82,7 @@ public class LibroDAO {
         return libro;
     }
 
-    public void actualizarLibro(int id, String nombre, int idAutor) {
-        String sql = "UPDATE libros SET nombre = ?, id_autor = ? WHERE id = ?";
-
-        try {
-            Connection conn = DatabaseConnection.conectar();
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ps.setString(1, nombre);
-            ps.setInt(2, idAutor);
-            ps.setInt(3, id);
-
-            ps.executeUpdate();
-            System.out.println("Libro actualizado.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+    //Metodo para mostrar todos los libros de un autor.
     public List<Libro> consultarLibrosPorAutor(int idAutor) {
         List<Libro> libros = new ArrayList<>();
         String sql = "SELECT * FROM libros WHERE id_autor = ?";
@@ -124,6 +109,7 @@ public class LibroDAO {
         return libros;
     }
 
+    //Metodo para ordenar los libros más prestados.
     public List<String> obtenerLibrosMasPrestados() {
         List<String> lista = new ArrayList<>();
 
