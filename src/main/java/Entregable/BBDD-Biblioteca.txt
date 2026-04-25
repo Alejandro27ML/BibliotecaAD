@@ -1,0 +1,66 @@
+Script BBDD Biblioteca:
+
+
+CREATE DATABASE Biblioteca;
+USE Biblioteca;
+
+CREATE TABLE Autores (
+    ID INT PRIMARY KEY,
+    Nombre VARCHAR(50),
+    Apellido VARCHAR(50)
+);
+
+CREATE TABLE Usuarios (
+    ID INT PRIMARY KEY,
+    Nombre VARCHAR(50),
+    Apellido VARCHAR(50)
+);
+
+CREATE TABLE Libros (
+    ID INT PRIMARY KEY,
+    Nombre VARCHAR(100),
+    ID_Autor INT,
+    FOREIGN KEY (ID_Autor) REFERENCES Autores(ID)
+);
+
+CREATE TABLE Prestamos (
+    ID INT PRIMARY KEY,
+    ID_Usuario INT,
+    ID_Libro INT,
+    F_Prestamo DATE,
+    F_Devolucion DATE,
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuarios(ID),
+    FOREIGN KEY (ID_Libro) REFERENCES Libros(ID)
+);
+
+
+INSERT INTO Autores VALUES
+(101, 'Brandon', 'Sanderson'),
+(102, 'Robert', 'Jordan'),
+(103, 'Andrej', 'Sapkowski'),
+(104, 'Joe', 'Abercrombie'),
+(105, 'George', 'R.R. Martin');
+
+INSERT INTO Usuarios VALUES
+(11, 'Juan', 'Fernandez'),
+(12, 'Maria', 'Rodriguez'),
+(13, 'Jaime', 'Rivero'),
+(14, 'Luisa', 'Perez'),
+(15, 'Marta', 'Cruz');
+
+INSERT INTO Libros VALUES
+(1, 'El camino de los reyes', 101),
+(2, 'Los diablos', 104),
+(3, 'Festín de cuervos', 105),
+(4, 'Encrucijada en el crepúsculo', 102),
+(5, 'Elantris', 101);
+
+INSERT INTO Prestamos VALUES
+(1001, 13, 3, '2026-04-17', '2026-05-02'),
+(1002, 15, 4, '2026-04-13', '2026-04-28'),
+(1003, 14, 1, '2026-04-12', '2026-04-27'),
+(1004, 14, 5, '2026-04-18', '2026-05-03'),
+(1005, 11, 2, '2026-04-15', '2026-04-30');
+
+
+

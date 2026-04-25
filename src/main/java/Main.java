@@ -24,6 +24,8 @@ public class Main {
 
         int opcion;
 
+        //Creo un menú con un Switch para elegir entre las opciones, cada opción
+        //cargará los métodos que necesite.
         do {
             System.out.println("\n-----{ BIBLIOTECA }-----");
             System.out.println("1. Insertar autor.");
@@ -43,12 +45,12 @@ public class Main {
             System.out.println("0. Salir.");
             System.out.print("Elige una opción: ");
 
-            opcion = comprobarOpcion(sc, 0, 13);
+            opcion = comprobarOpcion(sc, 0, 14);
 
             switch (opcion) {
 
                 case 1:
-                    int idAutor = comprobarIDNuevo(sc, "ID del autor (100-999): ", "autor", autorDAO);
+                    int idAutor = comprobarIDNuevo(sc, "ID del autor: ", "autor", autorDAO);
                     String nombreAutor = comprobarTexto(sc, "Nombre: ");
                     String apellidoAutor = comprobarTexto(sc, "Apellido: ");
 
@@ -60,7 +62,7 @@ public class Main {
                     break;
 
                 case 3:
-                    int idLibro = comprobarIDNuevo(sc, "ID del libro (1-99): ", "libro", libroDAO);
+                    int idLibro = comprobarIDNuevo(sc, "ID del libro: ", "libro", libroDAO);
                     String nombreLibro = comprobarTexto(sc, "Nombre del libro: ");
                     int idAutorLibro = comprobarID(sc, "ID del autor: ", "autor", autorDAO);
 
@@ -72,7 +74,7 @@ public class Main {
                     break;
 
                 case 5:
-                    int idUsuario = comprobarIDNuevo(sc, "ID del usuario (10-99): ", "usuario", usuarioDAO);
+                    int idUsuario = comprobarIDNuevo(sc, "ID del usuario: ", "usuario", usuarioDAO);
                     String nombreUsuario = comprobarTexto(sc, "Nombre: ");
                     String apellidoUsuario = comprobarTexto(sc, "Apellido: ");
 
@@ -89,7 +91,7 @@ public class Main {
                     break;
 
                 case 8:
-                    int idPrestamo = comprobarIDNuevo(sc, "ID del préstamo (1000-9999): ", "prestamo", prestamoDAO);
+                    int idPrestamo = comprobarIDNuevo(sc, "ID del préstamo: ", "prestamo", prestamoDAO);
                     int idU = comprobarID(sc, "ID del usuario: ", "usuario", usuarioDAO);
                     int idL = comprobarID(sc, "ID del libro: ", "libro", libroDAO);
                     System.out.print("Fecha préstamo (YYYY-MM-DD): ");
@@ -145,12 +147,11 @@ public class Main {
         sc.close();
     }
 
-    //No sabia donde meter estos metodos, así que los voy a poner en el Main, no se si es correcto.
+    //No sabia donde meter estos métodos, así que los voy a poner en el Main, no se si es correcto.
 
     //Comprobar que en el menú se indica una opción válida:
     public static int comprobarOpcion(Scanner sc, int min, int max) {
         while (true) {
-            System.out.print("Elige una opción: ");
 
             if (!sc.hasNextInt()) {
                 System.out.println("Debes introducir un número.");
@@ -170,11 +171,11 @@ public class Main {
         }
     }
 
-    //Validar formatos de id.
+    //Aquí creo y valido los formatos que tendrá cada id.
     public static boolean validarFormatoID(int id, String tipo) {
         switch (tipo) {
             case "autor": return id >= 100 && id <= 999;
-            case "libro": return id >= 1 && id <= 99;
+            case "libro": return id >= 1 && id <= 9;
             case "usuario": return id >= 10 && id <= 99;
             case "prestamo": return id >= 1000 && id <= 9999;
             default: return false;
@@ -182,6 +183,9 @@ public class Main {
     }
 
     //Comprobar que si un ID existe en la BBDD para evitar que cierre el programa al introducir un ID no Válido.
+    //El objeto Object nos permite comprobar las clases que hemos creado.
+    //Object dao -> nos permitirá comprobar las clases DAO para asegurarse que el id introducido está dentro
+    //de su respectiva tabla, por ejemplo un id de autor está dentro de la tabla autores y no en libros.
     public static int comprobarID(Scanner sc, String mensaje, String tipo, Object dao) {
         int id;
 
@@ -197,6 +201,7 @@ public class Main {
 
             boolean existe = false;
 
+            //Aquí es donde comprobamos su el id existe en las tablas:
             switch (tipo) {
                 case "autor": existe = ((AutorDAO) dao).buscarPorId(id) != null; break;
                 case "usuario": existe = ((UsuarioDAO) dao).buscarPorId(id) != null; break;

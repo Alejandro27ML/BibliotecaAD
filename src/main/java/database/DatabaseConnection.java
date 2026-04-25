@@ -2,6 +2,7 @@ package database;
 
 import java.sql.*;
 
+//Visto en clase para establecer la conexión con la BBDD
 public class DatabaseConnection {
     private static final String URL = "jdbc:postgresql://localhost:5432/Biblioteca";
     private static final String USER = "Alejandro";
@@ -11,7 +12,6 @@ public class DatabaseConnection {
         Connection conexion = null;
 
         try {
-
             conexion = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Conexión exitosa");
         } catch (SQLException e) {
