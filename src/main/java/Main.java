@@ -48,12 +48,9 @@ public class Main {
             switch (opcion) {
 
                 case 1:
-                    System.out.print("ID del autor: ");
-                    int idAutor = sc.nextInt(); sc.nextLine();
-                    System.out.print("Nombre: ");
-                    String nombreAutor = sc.nextLine();
-                    System.out.print("Apellido: ");
-                    String apellidoAutor = sc.nextLine();
+                    int idAutor = comprobarIDNuevo(sc, "ID del autor (100-999): ", "autor", autorDAO);
+                    String nombreAutor = comprobarTexto(sc, "Nombre: ");
+                    String apellidoAutor = comprobarTexto(sc, "Apellido: ");
 
                     autorDAO.insertarAutor(new Autor(idAutor, nombreAutor, apellidoAutor));
                     break;
@@ -63,12 +60,9 @@ public class Main {
                     break;
 
                 case 3:
-                    System.out.print("ID del libro: ");
-                    int idLibro = sc.nextInt(); sc.nextLine();
-                    System.out.print("Nombre del libro: ");
-                    String nombreLibro = sc.nextLine();
-                    System.out.print("ID del autor: ");
-                    int idAutorLibro = sc.nextInt();
+                    int idLibro = comprobarIDNuevo(sc, "ID del libro (1-99): ", "libro", libroDAO);
+                    String nombreLibro = comprobarTexto(sc, "Nombre del libro: ");
+                    int idAutorLibro = comprobarID(sc, "ID del autor: ", "autor", autorDAO);
 
                     libroDAO.insertarLibro(new Libro(idLibro, nombreLibro, idAutorLibro));
                     break;
@@ -78,12 +72,9 @@ public class Main {
                     break;
 
                 case 5:
-                    System.out.print("ID del usuario: ");
-                    int idUsuario = sc.nextInt(); sc.nextLine();
-                    System.out.print("Nombre: ");
-                    String nombreUsuario = sc.nextLine();
-                    System.out.print("Apellido: ");
-                    String apellidoUsuario = sc.nextLine();
+                    int idUsuario = comprobarIDNuevo(sc, "ID del usuario (10-99): ", "usuario", usuarioDAO);
+                    String nombreUsuario = comprobarTexto(sc, "Nombre: ");
+                    String apellidoUsuario = comprobarTexto(sc, "Apellido: ");
 
                     usuarioDAO.insertarUsuario(new Usuario(idUsuario, nombreUsuario, apellidoUsuario));
                     break;
@@ -93,20 +84,14 @@ public class Main {
                     break;
 
                 case 7:
-                    System.out.print("ID del usuario a eliminar: ");
-                    int idUsuarioEliminar =sc.nextInt(); sc.nextLine();
-
+                    int idUsuarioEliminar = comprobarID(sc, "ID del usuario a eliminar: ", "usuario", usuarioDAO);
                     usuarioDAO.eliminarUsuario(idUsuarioEliminar);
                     break;
 
                 case 8:
-                    System.out.print("ID del préstamo: ");
-                    int idPrestamo = sc.nextInt();
-                    System.out.print("ID del usuario: ");
-                    int idU = sc.nextInt();
-                    System.out.print("ID del libro: ");
-                    int idL = sc.nextInt();
-                    sc.nextLine();
+                    int idPrestamo = comprobarIDNuevo(sc, "ID del préstamo (1000-9999): ", "prestamo", prestamoDAO);
+                    int idU = comprobarID(sc, "ID del usuario: ", "usuario", usuarioDAO);
+                    int idL = comprobarID(sc, "ID del libro: ", "libro", libroDAO);
                     System.out.print("Fecha préstamo (YYYY-MM-DD): ");
                     LocalDate fechaP = LocalDate.parse(sc.nextLine());
 
@@ -118,14 +103,12 @@ public class Main {
                     break;
 
                 case 10:
-                    System.out.print("ID del autor: ");
-                    int idAutorConsulta = sc.nextInt();
+                    int idAutorConsulta = comprobarID(sc, "ID del autor: ", "autor", autorDAO);
                     libroDAO.consultarLibrosPorAutor(idAutorConsulta).forEach(System.out::println);
                     break;
 
                 case 11:
-                    System.out.print("ID del usuario: ");
-                    int idUsuarioConsulta = sc.nextInt();
+                    int idUsuarioConsulta = comprobarID(sc, "ID del usuario: ", "usuario", usuarioDAO);
                     prestamoDAO.consultarPrestamosPorUsuario(idUsuarioConsulta).forEach(System.out::println);
                     break;
 
@@ -135,7 +118,6 @@ public class Main {
 
                 case 13:
                     System.out.println("\n--- Libros más prestados ---");
-
                     List<String> ranking = libroDAO.obtenerLibrosMasPrestados();
 
                     if (ranking.isEmpty()) {
@@ -157,5 +139,93 @@ public class Main {
 
         sc.close();
     }
+
+    //No sabia donde meter estos metodos, así que los voy a poner en el Main, no se si es correcto.
+
+    //Validar formatos de id.
+    public static boolean validarFormatoID(int id, String tipo) {
+        switch (tipo) {
+            case "autor": return id >= 100 && id <= 999;
+            case "libro": return id >= 1 && id <= 99;
+            case "usuario": return id >= 10 && id <= 99;
+            case "prestamo": return id >= 1000 && id <= 9999;
+            default: return false;
+        }
+    }
+
+    //Comprobar que si un ID existe en la BBDD para evitar que cierre el programa al introducir un ID no Válido.
+    public static int comprobarID(Scanner sc, String mensaje, String tipo, Object dao) {
+        int id;
+
+        while (true) {
+            System.out.print(mensaje);
+            id = sc.nextInt();
+            sc.nextLine();
+
+            if (!validarFormatoID(id, tipo)) {
+                System.out.println("Formato de ID incorrecto para " + tipo + ".");
+                continue;
+            }
+
+            boolean existe = false;
+
+            switch (tipo) {
+                case "autor": existe = ((AutorDAO) dao).buscarPorId(id) != null; break;
+                case "usuario": existe = ((UsuarioDAO) dao).buscarPorId(id) != null; break;
+                case "libro": existe = ((LibroDAO) dao).buscarPorId(id) != null; break;
+                case "prestamo": existe = ((PrestamoDAO) dao).buscarPorId(id) != null; break;
+            }
+
+            if (existe) return id;
+
+            System.out.println("Ese " + tipo + " no existe. Intenta de nuevo.");
+        }
+    }
+
+    //Comprobar si un ID ya está registrado para no registrar el mismo ID.
+    public static int comprobarIDNuevo(Scanner sc, String mensaje, String tipo, Object dao) {
+        int id;
+
+        while (true) {
+            System.out.print(mensaje);
+            id = sc.nextInt();
+            sc.nextLine();
+
+            if (!validarFormatoID(id, tipo)) {
+                System.out.println("Formato de ID incorrecto para " + tipo + ".");
+                continue;
+            }
+
+            boolean existe = false;
+
+            switch (tipo) {
+                case "autor": existe = ((AutorDAO) dao).buscarPorId(id) != null; break;
+                case "usuario": existe = ((UsuarioDAO) dao).buscarPorId(id) != null; break;
+                case "libro": existe = ((LibroDAO) dao).buscarPorId(id) != null; break;
+                case "prestamo": existe = ((PrestamoDAO) dao).buscarPorId(id) != null; break;
+            }
+
+            if (!existe) return id;
+
+            System.out.println("Ese ID ya existe. Introduce uno diferente.");
+        }
+    }
+
+    //Comprobar si el téxto introducido es una cadena vacia para evitar errores.
+    //en algunos casos este metodo no será necesario gracias al de valicadión de formatos de ID.
+    public static String comprobarTexto(Scanner sc, String mensaje) {
+        String texto;
+
+        while (true) {
+            System.out.print(mensaje);
+            texto = sc.nextLine().trim();
+
+            if (!texto.isEmpty()) return texto;
+
+            System.out.println("El texto no puede estar vacío. Intenta de nuevo.");
+        }
+    }
+
 }
+
 
