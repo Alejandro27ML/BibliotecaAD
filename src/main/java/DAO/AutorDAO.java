@@ -10,6 +10,9 @@ import java.util.List;
 public class AutorDAO {
 
     //Metodo para insertar nuevo autor.
+    //El Objeto Connection nos permite preparar la conexión con la BBDD
+    //PrepareStatement prepara la consulta a la base de datos que realizamos en el
+    //String sql
     public void insertarAutor(Autor autor) {
         String sql = "INSERT INTO autores (id, nombre, apellido) VALUES (?, ?, ?)";
 

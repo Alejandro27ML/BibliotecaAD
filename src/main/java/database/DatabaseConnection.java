@@ -2,7 +2,9 @@ package database;
 
 import java.sql.*;
 
-//Visto en clase para establecer la conexión con la BBDD
+//Esta clase la vimos en clase, nos permite conectar con al BBDD, en el Try Catch
+//capturamos errores de conexión, para conectar con la Base de datos usamos el Objeto
+//Connection.
 public class DatabaseConnection {
     private static final String URL = "jdbc:postgresql://localhost:5432/Biblioteca";
     private static final String USER = "Alejandro";
